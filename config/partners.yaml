@@ -1,0 +1,94 @@
+# Healthcare Eligibility Pipeline - Partner Configuration
+# =======================================================
+# This configuration file defines partner-specific settings for data ingestion.
+# To add a new partner, simply add a new entry following the existing pattern.
+
+partners:
+  acme_health:
+    # Partner metadata
+    partner_code: "ACME"
+    description: "Acme Health - Primary care network"
+    
+    # File configuration
+    file_pattern: "acme*.txt"
+    delimiter: "|"
+    encoding: "utf-8"
+    has_header: true
+    
+    # Column mapping: source_column -> standard_field
+    column_mapping:
+      MBI: "external_id"
+      FNAME: "first_name"
+      LNAME: "last_name"
+      DOB: "dob"
+      EMAIL: "email"
+      PHONE: "phone"
+    
+    # Date format for parsing (strptime format)
+    date_format: "%m/%d/%Y"
+
+  better_care:
+    # Partner metadata
+    partner_code: "BCARE"
+    description: "Better Care - Specialty services provider"
+    
+    # File configuration
+    file_pattern: "bettercare*.csv"
+    delimiter: ","
+    encoding: "utf-8"
+    has_header: true
+    
+    # Column mapping: source_column -> standard_field
+    column_mapping:
+      subscriber_id: "external_id"
+      first_name: "first_name"
+      last_name: "last_name"
+      date_of_birth: "dob"
+      email: "email"
+      phone: "phone"
+    
+    # Date format for parsing (strptime format)
+    date_format: "%Y-%m-%d"
+
+# Output schema definition (for documentation and validation)
+output_schema:
+  fields:
+    - name: "external_id"
+      type: "string"
+      required: true
+      description: "Unique identifier from partner system"
+    
+    - name: "first_name"
+      type: "string"
+      required: false
+      transformation: "title_case"
+      description: "Member first name"
+    
+    - name: "last_name"
+      type: "string"
+      required: false
+      transformation: "title_case"
+      description: "Member last name"
+    
+    - name: "dob"
+      type: "date"
+      required: false
+      format: "ISO-8601"
+      description: "Date of birth (YYYY-MM-DD)"
+    
+    - name: "email"
+      type: "string"
+      required: false
+      transformation: "lowercase"
+      description: "Contact email address"
+    
+    - name: "phone"
+      type: "string"
+      required: false
+      format: "XXX-XXX-XXXX"
+      description: "Contact phone number"
+    
+    - name: "partner_code"
+      type: "string"
+      required: true
+      description: "Source partner identifier"
